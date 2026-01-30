@@ -4,7 +4,8 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
-        $username = $_POST['username'];
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
 
@@ -12,18 +13,24 @@
 
         try {
 
-            $sql = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
+            $sql = "INSERT INTO users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)";
 
             $stmt = $conn->prepare($sql);
 
-            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':first_name', $first_name);
+            $stmt->bindParam(':last_name', $last_name);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashedPassword);
 
-            $stmt->execute();
+           if ($stmt->execute()) {
+                $last_id = $conn->lastInsertId();
 
-
-            echo json_encode(["status" => "success", "message" => "User registered successfully"]);
+                echo json_encode([
+                    "status" => "success", 
+                    "message" => "User registered successfully",
+                    "user_id" => $last_id
+                ]);
+            }
         } catch (PDOException $e) {
            echo json_encode(["status" => "error", "message" => "User already exists"]);
         }

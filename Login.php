@@ -10,17 +10,28 @@
 
         try {
 
-            $sql = "SELECT user_id FROM users WHERE email = :email AND password = :pass";
+            $sql = "SELECT user_id, password FROM users WHERE email = :email";
 
             $stmt = $conn->prepare($sql);
 
             $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':pass', $hashedPassword);
 
             $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            if ($user && password_verify($password, $user['password'])) {
+                echo json_encode([
+                    "status" => "success", 
+                    "message" => "User logged in successfully",
+                    "user_id" => $user['user_id']
+                ]);
+            } else {
+                echo json_encode([
+                    "status" => "error", 
+                    "message" => "Invalid email or password"
+                ]);
+            }
 
-            echo json_encode(["status" => "success", "message" => "User logged in successfully"]);
         } catch (PDOException $e) {
             echo json_encode(["status" => "error", "message" => "User does not exist"]);
         }
