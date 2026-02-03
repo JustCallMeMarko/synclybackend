@@ -8,8 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user_id = $_POST['id'];
     $date = $_POST['date'];
 
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
     try {
 
         $sql = "INSERT INTO tasks (owner_id, name, status, due_date)
