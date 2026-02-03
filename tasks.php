@@ -5,7 +5,7 @@ $user_id = $_GET['user_id'];
 
 $sql = "SELECT task_id, name, due_date, status
         FROM tasks
-        WHERE owner_id = :user_id AND status = 0
+        WHERE owner_id = :user_id AND status = 0 AND group_id IS NULL
         ORDER BY due_date ASC";
 
 $stmt = $conn->prepare($sql);
